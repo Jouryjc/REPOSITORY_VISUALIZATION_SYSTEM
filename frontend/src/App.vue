@@ -59,6 +59,33 @@
       </div>
     </div>
 
+    <!-- Stats Dashboard - 左下角固定位置 (独立于 Header) -->
+    <div class="fixed bottom-6 left-6 w-[300px] max-w-[300px] z-30 animate-fade-in-up pointer-events-auto" style="animation-delay: 0.5s; bottom: 12px">
+        <div class="border-l-2 border-cyan-500 pl-2 bg-black/60 backdrop-blur-sm py-2 pr-1 rounded-r-lg w-full">
+           <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_2px_cyan]">System Metrics</h3>
+           
+           <div class="space-y-4">
+               <!-- KB Coverage -->
+               <div>
+                   <CyberProgressBar label="KB Coverage" :value="kbPercentage" color="cyan" />
+                   <div class="flex justify-between text-[8px] text-[#00E5FF]/80 font-mono mt-0.5">
+                       <span>TARGET: ALL REPOS</span>
+                       <span>{{ kbCount }} / {{ repos.length }}</span>
+                   </div>
+               </div>
+
+               <!-- Construction Progress -->
+               <div>
+                   <CyberProgressBar label="Construction" :value="constructionPercentage" color="purple" />
+                   <div class="flex justify-between text-[8px] text-[#FF69B4]/80 font-mono mt-0.5">
+                       <span>TARGET: KB COMPLETED</span>
+                       <span>{{ constructionCount }} / {{ kbCount }}</span>
+                   </div>
+               </div>
+           </div>
+        </div>
+    </div>
+
     <!-- Details Panel (Cyberpunk Modal) -->
     <Transition name="slide-fade">
       <div v-if="selectedRepo" class="absolute top-[15%] right-8 w-96 tech-card p-6 text-cyan-50 z-20">
@@ -137,6 +164,7 @@
 import { ref, computed, onMounted } from 'vue';
 import ThreeScene from './components/ThreeScene.vue';
 import CyberPieChart from './components/CyberPieChart.vue';
+import CyberProgressBar from './components/CyberProgressBar.vue';
 
 const repos = ref([]);
 const loading = ref(true);
@@ -178,6 +206,15 @@ const kbPercentage = computed(() => {
     if (repos.value.length === 0) return 0;
     return Math.round((kbCount.value / repos.value.length) * 100);
 });
+
+// Construction Progress: Of the KBs, how many have profiles?
+const constructionCount = computed(() => repos.value.filter(r => r.knowledgeBase && r.hasProfile).length);
+
+const constructionPercentage = computed(() => {
+    if (kbCount.value === 0) return 0;
+    return Math.round((constructionCount.value / kbCount.value) * 100);
+});
+
 
 const fetchData = async () => {
     loading.value = true;

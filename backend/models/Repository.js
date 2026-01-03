@@ -10,6 +10,7 @@ const repositorySchema = new mongoose.Schema({
     caretaker: { type: String }, // 领域看护人 (can be split later if needed)
     remark: { type: String }, // 备注
     knowledgeBase: { type: Boolean, default: false }, // 知识库 (0 or 1 in CSV)
+    hasProfile: { type: Boolean, default: false }, // Has entry in knowledge_profiles.yaml
     description: { type: String }, // Optional
     // 3D Layout coordinates (calculated later)
     position: {

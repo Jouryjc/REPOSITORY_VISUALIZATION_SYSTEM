@@ -23,56 +23,124 @@ mongoose.connect(MONGODB_URI)
 // Ingest Data from CSV
 app.post('/api/ingest', async (req, res) => {
     const results = [];
-    // In Docker, csv is mounted at /app/repository-owners.csv, same dir as server.js
-    let csvPath = path.join(__dirname, 'repository-owners.csv');
+    const yaml = require('js-yaml');
 
+    // In Docker, csv is mounted at /app/repository-owners.csv
+    let csvPath = path.join(__dirname, 'repository-owners.csv');
+    let yamlPath = path.join(__dirname, '../knowledge_profiles.yaml'); // Relative to backend dir?
+
+    // Handle Docker paths vs Local paths
     if (!fs.existsSync(csvPath)) {
-        // Fallback for local dev if run from backend dir but csv is in parent
         csvPath = path.join(__dirname, '../repository-owners.csv');
+    }
+
+    // Check for profiles yaml
+    if (!fs.existsSync(yamlPath)) {
+        let altPath = path.join(__dirname, 'knowledge_profiles.yaml');
+        if (fs.existsSync(altPath)) yamlPath = altPath;
+    }
+
+    // Normalization helper
+    const normalizeRepoUrl = (url) => {
+        if (!url) return '';
+        let clean = url.trim();
+        // Remove protocol/domain prefix (http://.../ or git@...:)
+        // Regex: start with http/https -> slash, or start with git@ -> colon
+        clean = clean.replace(/^(https?:\/\/[^\/]+\/|git@[^:]+:)/, '');
+        // Remove .git suffix
+        clean = clean.replace(/\.git$/, '');
+        return clean;
+    };
+
+    let profiledRepos = new Set();
+    if (fs.existsSync(yamlPath)) {
+        try {
+            const doc = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
+            let items = [];
+            if (doc.profiles) {
+                items = Object.values(doc.profiles);
+            } else {
+                items = Object.values(doc);
+            }
+
+            items.forEach((item) => {
+                if (item.knowledge && Array.isArray(item.knowledge)) {
+                    item.knowledge.forEach(k => {
+                        if (k.repo) {
+                            const normalized = normalizeRepoUrl(k.repo);
+                            if (normalized) {
+                                profiledRepos.add(normalized);
+                                const parts = normalized.split('/');
+                                if (parts.length >= 2) {
+                                    profiledRepos.add(`${parts[parts.length - 2]}/${parts[parts.length - 1]}`);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            console.log(`Loaded ${profiledRepos.size} profiled entries from YAML`);
+        } catch (e) {
+            console.error("Failed to parse knowledge_profiles.yaml", e);
+        }
+    } else {
+        console.warn("knowledge_profiles.yaml not found at", yamlPath);
     }
 
     if (!fs.existsSync(csvPath)) {
         return res.status(404).json({ error: 'CSV file not found', searchedPath: csvPath });
     }
 
-    // Clear existing data? Or update? Let's clear for simplicity in this demo/tool.
     await Repository.deleteMany({});
 
     fs.createReadStream(csvPath)
         .pipe(csv())
         .on('data', (data) => {
-            // Map CSV columns to Schema
-            // CSV headers: 仓库链接,开启合入管控,所属业务板块,所属子板块,所属团队,领域看护人,备注,知识库
-            // Note: CSV headers might be in Chinese. We need to handle that.
-            // Let's debug what keys we get if needed, but assuming standard matching.
-
-            // Helper to find key safely since encoding/spaces might be tricky
             const getValue = (row, keyPart) => {
                 const key = Object.keys(row).find(k => k.includes(keyPart));
                 return key ? row[key] : '';
             };
 
+            const url = getValue(data, '仓库链接');
+            const kbVal = getValue(data, '知识库');
+            const isKb = kbVal === '1';
+
+            let hasProfile = false;
+
+            if (url) {
+                const normalized = normalizeRepoUrl(url);
+                const shortMatch = normalized.split('/').slice(-2).join('/');
+
+                if (profiledRepos.has(normalized) || profiledRepos.has(shortMatch)) {
+                    hasProfile = true;
+                }
+            }
+
             results.push({
-                url: getValue(data, '仓库链接'),
+                url: url,
                 mergeControl: getValue(data, '开启合入管控'),
                 businessSegment: getValue(data, '所属业务板块'),
                 subSegment: getValue(data, '所属子板块'),
                 team: getValue(data, '所属团队'),
                 caretaker: getValue(data, '领域看护人'),
                 remark: getValue(data, '备注'),
-                knowledgeBase: getValue(data, '知识库') === '1', // Convert '1' to true, '0' to false
-                name: getValue(data, '仓库链接').split('/').pop() // simplistic name extraction
+                knowledgeBase: isKb,
+                hasProfile: hasProfile,
+                name: url.split('/').pop()
             });
         })
         .on('end', async () => {
+            const kbCount = results.filter(r => r.knowledgeBase).length;
+            const withProfileCount = results.filter(r => r.knowledgeBase && r.hasProfile).length;
+            console.log(`Ingested ${results.length} repos. KBs: ${kbCount}, With Profile: ${withProfileCount}`);
+
             try {
                 await Repository.insertMany(results, { ordered: false });
-                res.json({ message: 'Data ingestion successful', count: results.length });
+                res.json({ message: 'Data ingestion successful', count: results.length, stats: { kbCount, withProfileCount } });
             } catch (error) {
-                // Ignore duplicate key errors if some succeed
                 if (error.code === 11000 || error.writeErrors) {
                     console.warn('Some duplicates ignored during ingestion');
-                    res.json({ message: 'Data ingestion successful (with potential duplicates ignored)', count: results.length });
+                    res.json({ message: 'Data ingestion successful (with duplicates)', count: results.length, stats: { kbCount, withProfileCount } });
                 } else {
                     console.error('Ingestion error', error);
                     res.status(500).json({ error: 'Failed to ingest data', details: error.message });

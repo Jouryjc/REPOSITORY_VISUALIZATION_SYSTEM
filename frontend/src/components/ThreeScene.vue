@@ -95,12 +95,12 @@ const createTextSprite = (text) => {
 // Initializes the Three.js scene
 const initScene = () => {
     // Stats setup
-    stats = new Stats();
-    stats.showPanel(0); 
-    stats.dom.style.position = 'absolute';
-    stats.dom.style.top = '0px';
-    stats.dom.style.right = '0px';
-    container.value.appendChild(stats.dom);
+    // stats = new Stats();
+    // stats.showPanel(0); 
+    // stats.dom.style.position = 'absolute';
+    // stats.dom.style.top = '0px';
+    // stats.dom.style.right = '0px';
+    // container.value.appendChild(stats.dom);
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050510); // Slightly lighter deep blue for contrast
@@ -295,7 +295,7 @@ const onWindowResize = () => {
 const animate = () => {
     animationId = requestAnimationFrame(animate);
     
-    stats.begin();
+    // stats.begin();
     controls.update();
 
     // Raycasting (Only if no repo selected)
@@ -343,7 +343,7 @@ const animate = () => {
 
     // Render with Composer
     composer.render();
-    stats.end();
+    // stats.end();
 };
 
 watch(() => props.repos, () => {

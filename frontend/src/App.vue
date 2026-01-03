@@ -4,28 +4,41 @@
     <!-- Header / Interface -->
     <div class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
       <div class="pointer-events-auto">
-        <h1 class="text-3xl font-bold tracking-widest uppercase bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">Knowledge Universe</h1>
+        <h1 class="text-3xl font-bold tracking-widest uppercase font-mono text-[#22d3ee]" style="text-shadow: 0 0 10px rgba(34,211,238,0.8);">Knowledge Universe</h1>
         <p class="text-cyan-500 text-xs tracking-[0.5em] mt-1 pl-1 font-mono animate-pulse drop-shadow-[0_0_2px_cyan]">REPOSITORY_VISUALIZATION_SYSTEM</p>
-      </div>
 
-      <!-- Camera Controls -->
-      <div class="pointer-events-auto flex gap-6 p-2">
-          <button @click="setCamera('overview')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
+        <!-- Stats Pie Chart (Hidden as requested) -->
+        <!-- <div class="mt-2 pl-1 flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform duration-300">
+            <CyberPieChart :percentage="kbPercentage" />
+            
+            <div class="flex flex-col">
+                <div class="text-[10px] font-mono font-bold text-cyan-600 tracking-widest uppercase mb-0.5">Coverage Analysis</div>
+                <div class="text-xs font-bold text-cyan-100 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
+                    KNOWLEDGE BASE
+                </div>
+            </div>
+        </div> -->
+        
+        <!-- Camera Controls (Moved Here, Vertical Column) -->
+        <div class="mt-8 flex flex-col space-y-12 items-start">
+          <button @click="setCamera('overview')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
               Overview
           </button>
-          <button @click="setCamera('top')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
+          <button @click="setCamera('top')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
               Top View
           </button>
-          <button @click="setCamera('deep')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
+          <button @click="setCamera('deep')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
               Deep Dive
           </button>
-          <button @click="setCamera('reset')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
+          <button @click="setCamera('reset')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
               Reset
           </button>
+        </div>
       </div>
       
       <div class="pointer-events-auto flex gap-4 items-center">
-        <div class="relative group">
+        <!-- Search and Filter (Hidden as requested) -->
+        <!-- <div class="relative group">
             <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
             <input 
               v-model="searchQuery" 
@@ -42,7 +55,7 @@
                 <option value="" class="bg-black text-white">All Segments</option>
                 <option v-for="seg in segments" :key="seg" :value="seg" class="bg-black text-white">{{ seg }}</option>
             </select>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -123,6 +136,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import ThreeScene from './components/ThreeScene.vue';
+import CyberPieChart from './components/CyberPieChart.vue';
 
 const repos = ref([]);
 const loading = ref(true);
@@ -160,6 +174,11 @@ const segments = computed(() => {
 
 const kbCount = computed(() => repos.value.filter(r => r.knowledgeBase).length);
 
+const kbPercentage = computed(() => {
+    if (repos.value.length === 0) return 0;
+    return Math.round((kbCount.value / repos.value.length) * 100);
+});
+
 const fetchData = async () => {
     loading.value = true;
     try {
@@ -185,10 +204,17 @@ const fetchData = async () => {
 const handleSearch = () => {
     // Client-side selection logic
     if (!searchQuery.value) {
+        // Optional: Deselect if empty?
+        // selectedRepo.value = null; 
         return;
     }
 
     const query = searchQuery.value.toLowerCase();
+    // Find best match. Priority: Exact name -> URL contains -> Partial name
+    // Filter against the CURRENTLY VISIBLE set (filteredRepos) or ALL?
+    // Probably all, but if we have a segment filter active, maybe we only search within it?
+    // Let's search within filteredRepos to respect the sector view.
+    
     const candidates = filteredRepos.value;
     const match = candidates.find(r => 
         (r.name && r.name.toLowerCase().includes(query)) ||
@@ -198,19 +224,6 @@ const handleSearch = () => {
     if (match) {
         selectedRepo.value = match;
     }
-};
-
-const rippleTrigger = ref(false);
-
-const handleInput = () => {
-    // Trigger logic search
-    handleSearch();
-    
-    // Trigger Ripple Animation
-    rippleTrigger.value = false;
-    setTimeout(() => {
-        rippleTrigger.value = true;
-    }, 10);
 };
 
 onMounted(async () => {
@@ -370,173 +383,6 @@ body {
     @keyframes grid-flow {
         0% { transform: perspective(500px) rotateX(20deg) translateY(0); }
         100% { transform: perspective(500px) rotateX(20deg) translateY(20px); }
-    }
-
-    /* --- Holographic Energy Shield Input --- */
-    .holo-input-container {
-        position: relative;
-        width: 350px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        perspective: 1000px; /* For 3D depth */
-    }
-
-    /* 1. Underlying Energy Shield Shape (Backplate) */
-    .holo-shield-backplate {
-        position: absolute;
-        inset: 0;
-        background: rgba(5, 20, 35, 0.6); /* Deep dark cyan base */
-        clip-path: polygon(
-            15px 0, 
-            100% 0, 
-            100% calc(100% - 15px), 
-            calc(100% - 15px) 100%, 
-            0 100%, 
-            0 15px
-        );
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        box-shadow: 0 0 15px rgba(6, 182, 212, 0.1);
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1;
-    }
-
-    /* Neon Rim Light (Pseudo-element for glowy border) */
-    .holo-shield-backplate::before {
-        content: '';
-        position: absolute;
-        inset: -1px;
-        background: linear-gradient(135deg, rgba(34, 211, 238, 0.8), transparent 40%, transparent 60%, rgba(34, 211, 238, 0.8));
-        z-index: -1;
-        opacity: 0.5;
-        transition: opacity 0.3s;
-        clip-path: polygon(
-            15px 0, 
-            100% 0, 
-            100% calc(100% - 15px), 
-            calc(100% - 15px) 100%, 
-            0 100%, 
-            0 15px
-        );
-    }
-    
-    /* Micro-Texture: Hex Grid */
-    .holo-shield-backplate::after {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image: 
-            radial-gradient(circle, rgba(34, 211, 238, 0.1) 1px, transparent 1px);
-        background-size: 6px 6px; /* Hex-like dots */
-        opacity: 0.3;
-        pointer-events: none;
-    }
-
-    /* Scanline Animation */
-    .holo-scanline {
-        position: absolute;
-        top: 0; left: 0; right: 0; height: 100%;
-        background: linear-gradient(to right, transparent, rgba(34, 211, 238, 0.2), transparent);
-        transform: skewX(-20deg) translateX(-150%);
-        animation: holo-scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        pointer-events: none;
-        z-index: 2;
-        mix-blend-mode: screen;
-    }
-
-    @keyframes holo-scan {
-        0%, 80% { transform: skewX(-20deg) translateX(-150%); }
-        100% { transform: skewX(-20deg) translateX(150%); }
-    }
-
-    /* 2. Input Field (Top Layer) */
-    .holo-input-field {
-        position: relative;
-        z-index: 5;
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        padding: 0 40px 0 20px;
-        font-family: 'Courier New', monospace;
-        font-weight: bold;
-        color: #ccfbf1; /* Cyan-50 */
-        font-size: 0.9rem;
-        letter-spacing: 0.1em;
-        text-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
-    }
-    
-    .holo-input-field::placeholder {
-        color: rgba(34, 211, 238, 0.4);
-        text-shadow: none;
-        opacity: 1;
-        animation: placeholder-pulse 2s infinite ease-in-out;
-    }
-
-    @keyframes placeholder-pulse {
-        0%, 100% { opacity: 0.4; }
-        50% { opacity: 0.7; }
-    }
-
-    /* Search Icon */
-    .holo-search-icon {
-        position: absolute;
-        right: 15px;
-        z-index: 6;
-        color: #22d3ee;
-        filter: drop-shadow(0 0 5px #22d3ee);
-        transition: all 0.3s;
-    }
-
-    /* --- Interaction States --- */
-    
-    /* Focus: Energy Activation */
-    .holo-input-container:focus-within .holo-shield-backplate {
-        background: rgba(5, 25, 45, 0.85);
-        box-shadow: 
-            0 0 25px rgba(34, 211, 238, 0.4),
-            inset 0 0 10px rgba(34, 211, 238, 0.2);
-        border-color: #22d3ee;
-    }
-
-    .holo-input-container:focus-within .holo-shield-backplate::before {
-        opacity: 1; /* Bright rim light */
-        filter: drop-shadow(0 0 8px #22d3ee);
-    }
-
-    .holo-input-container:focus-within .holo-input-field {
-        text-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
-        color: #fff;
-    }
-    
-    /* Ripple Effect Logic (Simulated via active class) */
-    .holo-input-ripple {
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 0; height: 0;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(234, 179, 8, 0.8), transparent); /* Orange burst */
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        pointer-events: none;
-        z-index: 4;
-    }
-    
-    .ripple-active {
-        animation: ripple-burst 0.4s ease-out forwards;
-    }
-    
-    @keyframes ripple-burst {
-        0% { width: 0; height: 0; opacity: 1; }
-        100% { width: 200px; height: 100px; opacity: 0; }
-    }
-
-    /* Orange shift on Focus (Optional as per req) */
-    .holo-input-container:focus-within .holo-search-icon {
-        color: #fbbf24; /* Amber-400 */
-        filter: drop-shadow(0 0 8px #fbbf24);
-        transform: scale(1.1);
     }
 }
 </style>

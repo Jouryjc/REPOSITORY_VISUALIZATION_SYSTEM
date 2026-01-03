@@ -108,8 +108,8 @@ const initScene = () => {
 
     // Camera
     camera = new THREE.PerspectiveCamera(60, container.value.clientWidth / container.value.clientHeight, 1, 4000);
-    camera.position.z = 800;
-    camera.position.y = 200;
+    camera.position.z = 1800;
+    camera.position.y = 400;
 
     // Renderer
     renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" }); // Bloom requires disabling antialias in some setups or using MSAA pass, but standard is false + distinct pass

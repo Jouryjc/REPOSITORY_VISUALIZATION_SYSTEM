@@ -4,22 +4,22 @@
     <!-- Header / Interface -->
     <div class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
       <div class="pointer-events-auto">
-        <h1 class="text-2xl font-bold tracking-wider text-cyan-400 uppercase">Knowledge Universe</h1>
-        <p class="text-cyan-600 text-xs tracking-[0.3em] mt-1 pl-1">REPOSITORY_VISUALIZATION_SYSTEM</p>
+        <h1 class="text-3xl font-bold tracking-widest uppercase bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">Knowledge Universe</h1>
+        <p class="text-cyan-500 text-xs tracking-[0.5em] mt-1 pl-1 font-mono animate-pulse drop-shadow-[0_0_2px_cyan]">REPOSITORY_VISUALIZATION_SYSTEM</p>
       </div>
 
       <!-- Camera Controls -->
-      <div class="pointer-events-auto flex gap-2 bg-black/40 backdrop-blur-md p-1 rounded border border-cyan-900/50">
-          <button @click="setCamera('overview')" class="px-3 py-1 text-xs font-mono text-cyan-400 hover:bg-cyan-900/50 hover:text-white border border-transparent hover:border-cyan-500/50 transition-all uppercase tracking-wider">
+      <div class="pointer-events-auto flex gap-6 p-2">
+          <button @click="setCamera('overview')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
               Overview
           </button>
-          <button @click="setCamera('top')" class="px-3 py-1 text-xs font-mono text-cyan-400 hover:bg-cyan-900/50 hover:text-white border border-transparent hover:border-cyan-500/50 transition-all uppercase tracking-wider">
+          <button @click="setCamera('top')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
               Top View
           </button>
-          <button @click="setCamera('deep')" class="px-3 py-1 text-xs font-mono text-cyan-400 hover:bg-cyan-900/50 hover:text-white border border-transparent hover:border-cyan-500/50 transition-all uppercase tracking-wider">
+          <button @click="setCamera('deep')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
               Deep Dive
           </button>
-          <button @click="setCamera('reset')" class="px-3 py-1 text-xs font-mono text-cyan-400 hover:bg-cyan-900/50 hover:text-white border border-transparent hover:border-cyan-500/50 transition-all uppercase tracking-wider">
+          <button @click="setCamera('reset')" class="px-6 py-2 text-xs font-bold holo-btn clip-path-button">
               Reset
           </button>
       </div>
@@ -62,33 +62,34 @@
                  <button @click="closeDetails" class="text-cyan-500 hover:text-cyan-300 hover:rotate-90 transition-all duration-300">✕</button>
               </div>
               
-              <div class="space-y-4 text-sm font-mono tracking-wide">
-                 <div class="flex group">
-                     <span class="text-cyan-500 w-24 uppercase text-xs pt-1 font-bold">URL_LINK</span> 
-                     <a :href="selectedRepo.url" target="_blank" class="text-white hover:text-cyan-300 hover:underline truncate flex-1 block transition-colors font-semibold">{{ selectedRepo.url }}</a>
+              <div class="space-y-5 text-sm font-mono tracking-wide">
+                 <div class="flex group items-baseline">
+                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">URL_LINK</span> 
+                     <a :href="selectedRepo.url" target="_blank" class="text-cyan-100 hover:text-white hover:shadow-[0_0_10px_cyan] hover:underline truncate flex-1 block transition-all font-bold text-shadow-sm">{{ selectedRepo.url }}</a>
                  </div>
-                 <div class="flex">
-                     <span class="text-cyan-500 w-24 uppercase text-xs pt-1 font-bold">TEAM_ID</span> 
-                     <span class="text-white font-medium">{{ selectedRepo.team }}</span>
+                 <div class="flex items-baseline">
+                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">TEAM_ID</span> 
+                     <span class="text-gray-100 font-semibold drop-shadow-md">{{ selectedRepo.team }}</span>
                  </div>
-                 <div class="flex">
-                     <span class="text-cyan-500 w-24 uppercase text-xs pt-1 font-bold">SECTOR</span> 
-                     <span class="text-white font-medium">{{ selectedRepo.businessSegment }} <span v-if="selectedRepo.subSegment" class="text-cyan-400">>></span> {{ selectedRepo.subSegment }}</span>
+                 <div class="flex items-baseline">
+                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">SECTOR</span> 
+                     <span class="text-gray-100 font-semibold drop-shadow-md">{{ selectedRepo.businessSegment }} <span v-if="selectedRepo.subSegment" class="text-cyan-400 px-1">>></span> {{ selectedRepo.subSegment }}</span>
                  </div>
-                 <div class="flex">
-                     <span class="text-cyan-500 w-24 uppercase text-xs pt-1 font-bold">OWNER</span> 
-                     <span class="text-white font-medium">{{ selectedRepo.caretaker }}</span>
+                 <div class="flex items-baseline">
+                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">OWNER</span> 
+                     <span class="text-gray-100 font-semibold drop-shadow-md">{{ selectedRepo.caretaker }}</span>
                  </div>
-                 <div v-if="selectedRepo.remark" class="flex">
-                     <span class="text-cyan-500 w-24 uppercase text-xs pt-1 font-bold">NOTES</span> 
+                 <div v-if="selectedRepo.remark" class="flex items-baseline">
+                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">NOTES</span> 
                      <span class="text-slate-300 italic">{{ selectedRepo.remark }}</span>
                  </div>
                  
-                 <div v-if="selectedRepo.knowledgeBase" class="mt-6 p-3 bg-yellow-900/40 border-l-4 border-yellow-500 flex items-center gap-3">
-                     <span class="text-yellow-400 font-bold text-2xl animate-pulse">⚠</span>
+                 <div v-if="selectedRepo.knowledgeBase" class="mt-6 p-4 bg-gradient-to-r from-yellow-900/60 to-transparent border-l-4 border-yellow-400 flex items-center gap-4 relative overflow-hidden group">
+                     <div class="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                     <span class="text-yellow-400 font-bold text-3xl animate-pulse drop-shadow-[0_0_5px_gold]">⚠</span>
                      <div>
-                         <div class="text-yellow-500 text-xs font-bold uppercase tracking-widest">Classification</div>
-                         <div class="text-white font-bold text-sm">Valid Knowledge Base</div>
+                         <div class="text-yellow-500 text-[10px] font-bold uppercase tracking-[0.2em]">Classification</div>
+                         <div class="text-yellow-100 font-bold text-base drop-shadow-md">Valid Knowledge Base</div>
                      </div>
                  </div>
               </div>
@@ -146,12 +147,10 @@ const setCamera = (view) => {
 
 // Derived state
 const filteredRepos = computed(() => {
-    // If backend handles search, we might not need this if we reload data.
-    // However, for 3D smoothness, client-side filtering of position/visibility or just reloading the scene is options.
-    // Let's rely on backend filtering OR client side.
-    // Given the props to ThreeScene updates the scene, let's just use the current `repos` which we fetch from backend.
-    
-    return repos.value; 
+    // Client-side filtering for SECTORS only. 
+    // We do NOT filter by text anymore, as requested (text search selects instead).
+    if (!selectedSegment.value) return repos.value;
+    return repos.value.filter(r => r.businessSegment === selectedSegment.value);
 });
 
 const segments = computed(() => {
@@ -165,10 +164,15 @@ const fetchData = async () => {
     loading.value = true;
     try {
         const params = new URLSearchParams();
-        if (searchQuery.value) params.append('search', searchQuery.value);
-        if (selectedSegment.value) params.append('businessSegment', selectedSegment.value);
-
-        const res = await fetch(`http://localhost:3000/api/repos?${params.toString()}`);
+        // REMOVED searchQuery from params to keep all data loaded
+        // if (searchQuery.value) params.append('search', searchQuery.value);
+        
+        // We might still want to filter by segment on backend to save bandwidth?
+        // Or just load everything and filter client side?
+        // Given visual nature, loading everything is better for "not hiding others".
+        // Let's load everything.
+        
+        const res = await fetch(`http://localhost:3000/api/repos`);
         const data = await res.json();
         repos.value = data;
     } catch (e) {
@@ -179,16 +183,38 @@ const fetchData = async () => {
 };
 
 const handleSearch = () => {
-    // Debounce suggested for real app
-    fetchData();
+    // Client-side selection logic
+    if (!searchQuery.value) {
+        return;
+    }
+
+    const query = searchQuery.value.toLowerCase();
+    const candidates = filteredRepos.value;
+    const match = candidates.find(r => 
+        (r.name && r.name.toLowerCase().includes(query)) ||
+        (r.url && r.url.toLowerCase().includes(query))
+    );
+
+    if (match) {
+        selectedRepo.value = match;
+    }
+};
+
+const rippleTrigger = ref(false);
+
+const handleInput = () => {
+    // Trigger logic search
+    handleSearch();
+    
+    // Trigger Ripple Animation
+    rippleTrigger.value = false;
+    setTimeout(() => {
+        rippleTrigger.value = true;
+    }, 10);
 };
 
 onMounted(async () => {
   // Trigger ingest first just to be sure (optional, usually done once)
-  // For demo, let's try to ingest if empty, or just ingest always on load? No, expensive.
-  // We assume user ran the ingest script or we trigger it via button. 
-  // Let's add an auto-ingest check or just fetch.
-  // Actually, let's trigger ingest once to ensure data is there.
   try {
       await fetch('http://localhost:3000/api/ingest', { method: 'POST' });
   } catch (e) {
@@ -261,6 +287,256 @@ body {
         letter-spacing: 0.1em;
         text-transform: uppercase;
         border-bottom: 2px solid rgba(6, 182, 212, 0.8);
+    }
+    .clip-path-button {
+        clip-path: polygon(
+            10px 0, 
+            100% 0, 
+            100% calc(100% - 10px), 
+            calc(100% - 10px) 100%, 
+            0 100%, 
+            0 10px
+        );
+    }
+    
+    .holo-btn {
+        position: relative;
+        background: rgba(6, 182, 212, 0.15); /* Cyan glass base */
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(6, 182, 212, 0.5); /* Inner neon edge */
+        box-shadow: 
+            0 0 10px rgba(6, 182, 212, 0.3),
+            inset 0 0 15px rgba(6, 182, 212, 0.1);
+        color: #22d3ee;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        font-family: 'Courier New', monospace;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    /* Flowing Grid Texture */
+    .holo-btn::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; right: -50%; bottom: -50%;
+        background-image: 
+            linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        transform: perspective(500px) rotateX(20deg);
+        animation: grid-flow 10s linear infinite;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    /* Broken Frame Elements (The "Bracket" look) */
+    .holo-btn::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border: 2px solid transparent;
+        /* create brackets using gradient borders */
+        background: 
+            linear-gradient(to right, #22d3ee 2px, transparent 2px) top left,
+            linear-gradient(to bottom, #22d3ee 2px, transparent 2px) top left,
+            linear-gradient(to left, #22d3ee 2px, transparent 2px) bottom right,
+            linear-gradient(to top, #22d3ee 2px, transparent 2px) bottom right;
+        background-size: 10px 10px;
+        background-repeat: no-repeat;
+        box-shadow: 0 0 10px #22d3ee; /* Glow on brackets */
+        pointer-events: none;
+        transition: all 0.3s ease;
+        opacity: 0.8;
+    }
+    
+    /* Hover State */
+    .holo-btn:hover {
+        background: rgba(6, 182, 212, 0.3);
+        box-shadow: 
+            0 0 20px rgba(6, 182, 212, 0.6),
+            inset 0 0 20px rgba(6, 182, 212, 0.4);
+        border-color: #a5f3fc;
+        color: #fff;
+        text-shadow: 0 0 8px #22d3ee;
+        transform: translateY(-2px);
+    }
+    
+    .holo-btn:hover::after {
+        background-size: 15px 15px; /* Brackets expand */
+        box-shadow: 0 0 15px #22d3ee, 0 0 5px #fff;
+    }
+
+    @keyframes grid-flow {
+        0% { transform: perspective(500px) rotateX(20deg) translateY(0); }
+        100% { transform: perspective(500px) rotateX(20deg) translateY(20px); }
+    }
+
+    /* --- Holographic Energy Shield Input --- */
+    .holo-input-container {
+        position: relative;
+        width: 350px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        perspective: 1000px; /* For 3D depth */
+    }
+
+    /* 1. Underlying Energy Shield Shape (Backplate) */
+    .holo-shield-backplate {
+        position: absolute;
+        inset: 0;
+        background: rgba(5, 20, 35, 0.6); /* Deep dark cyan base */
+        clip-path: polygon(
+            15px 0, 
+            100% 0, 
+            100% calc(100% - 15px), 
+            calc(100% - 15px) 100%, 
+            0 100%, 
+            0 15px
+        );
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        box-shadow: 0 0 15px rgba(6, 182, 212, 0.1);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
+    }
+
+    /* Neon Rim Light (Pseudo-element for glowy border) */
+    .holo-shield-backplate::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        background: linear-gradient(135deg, rgba(34, 211, 238, 0.8), transparent 40%, transparent 60%, rgba(34, 211, 238, 0.8));
+        z-index: -1;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+        clip-path: polygon(
+            15px 0, 
+            100% 0, 
+            100% calc(100% - 15px), 
+            calc(100% - 15px) 100%, 
+            0 100%, 
+            0 15px
+        );
+    }
+    
+    /* Micro-Texture: Hex Grid */
+    .holo-shield-backplate::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: 
+            radial-gradient(circle, rgba(34, 211, 238, 0.1) 1px, transparent 1px);
+        background-size: 6px 6px; /* Hex-like dots */
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    /* Scanline Animation */
+    .holo-scanline {
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 100%;
+        background: linear-gradient(to right, transparent, rgba(34, 211, 238, 0.2), transparent);
+        transform: skewX(-20deg) translateX(-150%);
+        animation: holo-scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        pointer-events: none;
+        z-index: 2;
+        mix-blend-mode: screen;
+    }
+
+    @keyframes holo-scan {
+        0%, 80% { transform: skewX(-20deg) translateX(-150%); }
+        100% { transform: skewX(-20deg) translateX(150%); }
+    }
+
+    /* 2. Input Field (Top Layer) */
+    .holo-input-field {
+        position: relative;
+        z-index: 5;
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 0 40px 0 20px;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #ccfbf1; /* Cyan-50 */
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
+    }
+    
+    .holo-input-field::placeholder {
+        color: rgba(34, 211, 238, 0.4);
+        text-shadow: none;
+        opacity: 1;
+        animation: placeholder-pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes placeholder-pulse {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.7; }
+    }
+
+    /* Search Icon */
+    .holo-search-icon {
+        position: absolute;
+        right: 15px;
+        z-index: 6;
+        color: #22d3ee;
+        filter: drop-shadow(0 0 5px #22d3ee);
+        transition: all 0.3s;
+    }
+
+    /* --- Interaction States --- */
+    
+    /* Focus: Energy Activation */
+    .holo-input-container:focus-within .holo-shield-backplate {
+        background: rgba(5, 25, 45, 0.85);
+        box-shadow: 
+            0 0 25px rgba(34, 211, 238, 0.4),
+            inset 0 0 10px rgba(34, 211, 238, 0.2);
+        border-color: #22d3ee;
+    }
+
+    .holo-input-container:focus-within .holo-shield-backplate::before {
+        opacity: 1; /* Bright rim light */
+        filter: drop-shadow(0 0 8px #22d3ee);
+    }
+
+    .holo-input-container:focus-within .holo-input-field {
+        text-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
+        color: #fff;
+    }
+    
+    /* Ripple Effect Logic (Simulated via active class) */
+    .holo-input-ripple {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(234, 179, 8, 0.8), transparent); /* Orange burst */
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 4;
+    }
+    
+    .ripple-active {
+        animation: ripple-burst 0.4s ease-out forwards;
+    }
+    
+    @keyframes ripple-burst {
+        0% { width: 0; height: 0; opacity: 1; }
+        100% { width: 200px; height: 100px; opacity: 0; }
+    }
+
+    /* Orange shift on Focus (Optional as per req) */
+    .holo-input-container:focus-within .holo-search-icon {
+        color: #fbbf24; /* Amber-400 */
+        filter: drop-shadow(0 0 8px #fbbf24);
+        transform: scale(1.1);
     }
 }
 </style>

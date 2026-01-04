@@ -60,29 +60,45 @@
     </div>
 
     <!-- Stats Dashboard - 左下角固定位置 (独立于 Header) -->
-    <div class="fixed bottom-6 left-6 w-[300px] max-w-[300px] z-30 animate-fade-in-up pointer-events-auto" style="animation-delay: 0.5s; bottom: 12px">
-        <div class="border-l-2 border-cyan-500 pl-2 bg-black/60 backdrop-blur-sm py-2 pr-1 rounded-r-lg w-full">
-           <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_2px_cyan]">System Metrics</h3>
-           
-           <div class="space-y-4">
-               <!-- KB Coverage -->
-               <div>
-                   <CyberProgressBar label="KB Coverage" :value="kbPercentage" color="cyan" />
-                   <div class="flex justify-between text-[8px] text-[#00E5FF]/80 font-mono mt-0.5">
-                       <span>TARGET: ALL REPOS</span>
-                       <span>{{ kbCount }} / {{ repos.length }}</span>
-                   </div>
-               </div>
+    <div class="fixed pointer-events-auto" style="bottom: 16px; left: 16px; z-index: 40;">
+        <div class="system-metrics-container">
+            <div class="metrics-header">
+                <h3 class="metrics-title">SYSTEM METRICS</h3>
+                <div class="metrics-subtitle">全局知识库统计</div>
+            </div>
+            
+            <div class="metrics-content">
+                <!-- KB Coverage -->
+                <div class="metric-item">
+                    <div class="metric-label-row">
+                        <span class="metric-name">知识库覆盖率</span>
+                        <span class="metric-count">{{ kbCount }} / {{ repos.length }}</span>
+                    </div>
+                    <div class="metric-bar-track">
+                        <div class="metric-bar-fill kb-bar" :style="{ width: `${kbPercentage}%` }">
+                            <span class="metric-bar-value">{{ kbPercentage }}%</span>
+                        </div>
+                    </div>
+                    <div class="metric-target">TARGET: ALL REPOS</div>
+                </div>
 
-               <!-- Construction Progress -->
-               <div>
-                   <CyberProgressBar label="Construction" :value="constructionPercentage" color="purple" />
-                   <div class="flex justify-between text-[8px] text-[#FF69B4]/80 font-mono mt-0.5">
-                       <span>TARGET: KB COMPLETED</span>
-                       <span>{{ constructionCount }} / {{ kbCount }}</span>
-                   </div>
-               </div>
-           </div>
+                <!-- Construction Progress -->
+                <div class="metric-item">
+                    <div class="metric-label-row">
+                        <span class="metric-name">构建完成率</span>
+                        <span class="metric-count">{{ constructionCount }} / {{ kbCount }}</span>
+                    </div>
+                    <div class="metric-bar-track">
+                        <div class="metric-bar-fill construction-bar" :style="{ width: `${constructionPercentage}%` }">
+                            <span class="metric-bar-value">{{ constructionPercentage }}%</span>
+                        </div>
+                    </div>
+                    <div class="metric-target">TARGET: KB COMPLETED</div>
+                </div>
+            </div>
+            
+            <!-- Scan line effect -->
+            <div class="metrics-scan-line"></div>
         </div>
     </div>
 
@@ -183,6 +199,10 @@
     <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-black/90 z-50">
       <div class="text-cyan-400 text-xl animate-pulse">Initializing Universe...</div>
     </div>
+    <!-- Team Stats Chart - 右下角固定位置 -->
+    <div class="fixed pointer-events-auto" style="bottom: 16px; right: 16px; z-index: 40;">
+        <TeamStatsChart :repos="repos" :tl-names="TL_NAMES" />
+    </div>
 
   </div>
 </template>
@@ -192,6 +212,8 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import ThreeScene from './components/ThreeScene.vue';
 import CyberPieChart from './components/CyberPieChart.vue';
 import CyberProgressBar from './components/CyberProgressBar.vue';
+import TeamStatsChart from './components/TeamStatsChart.vue';
+import { TL_NAMES } from './config';
 
 const repos = ref([]);
 const loading = ref(true);
@@ -375,6 +397,166 @@ body {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+/* System Metrics Container - Matching Team Stats Style */
+.system-metrics-container {
+    position: relative;
+    background: rgba(5, 10, 20, 0.9);
+    border: 1px solid rgba(6, 182, 212, 0.6);
+    border-left: 2px solid #22d3ee;
+    padding: 16px;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    width: 280px;
+    clip-path: polygon(
+        0 0, 
+        100% 0, 
+        100% calc(100% - 12px), 
+        calc(100% - 12px) 100%, 
+        0 100%
+    );
+    box-shadow: 
+        0 0 20px rgba(6, 182, 212, 0.2),
+        inset 0 0 30px rgba(6, 182, 212, 0.05);
+}
+
+.system-metrics-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(6, 182, 212, 0.02) 2px,
+        rgba(6, 182, 212, 0.02) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.metrics-header {
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.4);
+    position: relative;
+    z-index: 2;
+}
+
+.metrics-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #22d3ee;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
+}
+
+.metrics-subtitle {
+    font-size: 9px;
+    color: rgba(34, 211, 238, 0.6);
+    letter-spacing: 0.1em;
+}
+
+.metrics-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.metric-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.05em;
+}
+
+.metric-count {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+.metric-bar-track {
+    height: 14px;
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.metric-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    position: relative;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 6px;
+    min-width: 40px;
+}
+
+.metric-bar-fill.kb-bar {
+    background: linear-gradient(90deg, rgba(34, 211, 238, 0.3) 0%, #22d3ee 100%);
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+.metric-bar-fill.construction-bar {
+    background: linear-gradient(90deg, rgba(0, 255, 159, 0.3) 0%, #00ff9f 100%);
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+}
+
+.metric-bar-value {
+    font-size: 9px;
+    font-weight: 700;
+    color: #000;
+    text-shadow: none;
+}
+
+.metric-target {
+    font-size: 8px;
+    color: rgba(34, 211, 238, 0.5);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* Scan line effect for metrics */
+.metrics-scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(34, 211, 238, 0.8) 50%,
+        transparent 100%
+    );
+    animation: metrics-scan 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes metrics-scan {
+    0% { top: 0; opacity: 0.8; }
+    50% { opacity: 0.4; }
+    100% { top: 100%; opacity: 0.8; }
 }
 
 .tech-card {

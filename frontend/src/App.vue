@@ -189,7 +189,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import ThreeScene from './components/ThreeScene.vue';
 import CyberPieChart from './components/CyberPieChart.vue';
 import CyberProgressBar from './components/CyberProgressBar.vue';
@@ -208,6 +208,13 @@ const handleSelectRepo = (repo) => {
 
 const closeDetails = () => {
     selectedRepo.value = null;
+};
+
+// Handle ESC key to close details panel
+const handleKeyDown = (event) => {
+    if (event.key === 'Escape' && selectedRepo.value) {
+        closeDetails();
+    }
 };
 
 // Add to Knowledge Base
@@ -342,6 +349,14 @@ onMounted(async () => {
   }
   
   await fetchData();
+  
+  // Add keyboard event listener for ESC key
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+  // Remove keyboard event listener
+  window.removeEventListener('keydown', handleKeyDown);
 });
 </script>
 

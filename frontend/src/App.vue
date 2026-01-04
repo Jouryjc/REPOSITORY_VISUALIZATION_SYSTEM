@@ -95,11 +95,32 @@
           <div class="relative z-10">
               <div class="flex justify-between items-start mb-6 tech-header pb-2">
                  <div class="flex items-center gap-3 flex-1 min-w-0">
-                    <!-- KB Status Badge - inline with title -->
+                    <!-- KB Status Badge OR Add to KB Button - inline with title -->
                     <div v-if="selectedRepo.knowledgeBase" class="kb-status-mini">
                        <div class="kb-mini-dot"></div>
                        <span>KB</span>
                     </div>
+                    <!-- Add to Knowledge Base Button (for non-KB repos) -->
+                    <button 
+                        v-else
+                        @click="addToKnowledgeBase"
+                        :disabled="isUpdating"
+                        class="cyber-add-btn group relative"
+                    >
+                        <!-- Border frame -->
+                        <div class="cyber-add-border"></div>
+                        <!-- Background -->
+                        <div class="cyber-add-bg"></div>
+                        <!-- Scan line effect -->
+                        <div class="cyber-add-scanline"></div>
+                        <!-- Content -->
+                        <span class="relative z-10 text-[#00ff9f] text-[10px] font-bold uppercase tracking-[0.1em] font-mono transition-colors duration-300 inline-flex items-center gap-1" style="text-shadow: 0 0 6px #00ff9f;">
+                            <svg class="w-[10px] h-[10px] transition-transform duration-300 group-hover:rotate-90 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="filter: drop-shadow(0 0 4px #00ff9f);">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round"/>
+                            </svg>
+                            {{ isUpdating ? '添加中...' : '添加知识库' }}
+                        </span>
+                    </button>
                     <h3 class="text-xl font-bold text-cyan-300 truncate drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" :title="selectedRepo.name">{{ selectedRepo.name || 'Repository' }}</h3>
                  </div>
                  <!-- Cyberpunk Close Button -->
@@ -145,28 +166,6 @@
                       <span class="info-label">备注：</span> 
                       <span class="text-cyan-200 italic text-sm pl-1">{{ selectedRepo.remark }}</span>
                   </div>
-              </div>
-
-              <!-- Footer Actions -->
-              <div class="mt-6 flex justify-between items-center">
-                  <!-- Add to Knowledge Base Button (for non-KB repos) -->
-                  <button 
-                      v-if="!selectedRepo.knowledgeBase" 
-                      @click="addToKnowledgeBase"
-                      :disabled="isUpdating"
-                      class="group relative px-4 py-2 bg-green-900/30 hover:bg-green-600/40 border border-green-600 hover:border-green-400 transition-all overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                      <span class="relative z-10 text-green-400 text-xs font-bold uppercase tracking-widest group-hover:text-green-100 flex items-center gap-2">
-                          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M12 4v16m8-8H4" stroke-linecap="round"/>
-                          </svg>
-                          {{ isUpdating ? '添加中...' : '添加知识库' }}
-                      </span>
-                      <div class="absolute inset-0 bg-green-500/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
-                  </button>
-                  
-                  <!-- Empty spacer for non-KB repos to maintain layout -->
-                  <div v-else></div>
               </div>
           </div>
       </div>
@@ -468,6 +467,96 @@ body {
     stroke: #22d3ee;
     filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.8));
     transform: rotate(90deg);
+}
+
+/* Cyberpunk Add to Knowledge Base Button - Matching KB Badge Style */
+.cyber-add-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+}
+
+.cyber-add-btn:hover {
+    transform: translateY(-2px);
+}
+
+.cyber-add-btn:active {
+    transform: translateY(0);
+}
+
+.cyber-add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.cyber-add-border {
+    position: absolute;
+    inset: 0;
+    border: 1px solid #00ff9f;
+    clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 0 8px rgba(0, 255, 159, 0.4),
+        inset 0 0 8px rgba(0, 255, 159, 0.1);
+    animation: kb-mini-glow 2s ease-in-out infinite alternate;
+}
+
+.cyber-add-btn:hover .cyber-add-border {
+    border-color: #4dffb8;
+    box-shadow: 
+        0 0 15px rgba(0, 255, 159, 0.7),
+        0 0 25px rgba(0, 255, 159, 0.4),
+        inset 0 0 15px rgba(0, 255, 159, 0.2);
+}
+
+.cyber-add-bg {
+    position: absolute;
+    inset: 1px;
+    background: linear-gradient(135deg, rgba(0, 255, 159, 0.2) 0%, rgba(0, 30, 20, 0.9) 100%);
+    clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+    transition: all 0.3s ease;
+}
+
+.cyber-add-btn:hover .cyber-add-bg {
+    background: linear-gradient(135deg, rgba(0, 255, 159, 0.35) 0%, rgba(0, 50, 35, 0.95) 100%);
+}
+
+/* Animated scan line effect */
+.cyber-add-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        #00ff9f 20%,
+        #00ff9f 80%,
+        transparent 100%
+    );
+    opacity: 0;
+    animation: add-scan 2s linear infinite;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.cyber-add-btn:hover .cyber-add-scanline {
+    opacity: 0.8;
+}
+
+@keyframes add-scan {
+    0% { top: 0; opacity: 0.8; }
+    50% { opacity: 0.4; }
+    100% { top: 100%; opacity: 0.8; }
 }
 
 /* Mini KB Status Badge - Inline with title */

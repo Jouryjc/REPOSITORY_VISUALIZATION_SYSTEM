@@ -54,9 +54,6 @@
         </div>
       </div>
     </div>
-    
-    <!-- Scan line effect -->
-    <div class="scan-line"></div>
   </div>
 </template>
 

@@ -1,0 +1,35 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="planet_grad" x1="8" y1="8" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#22d3ee" />
+            <stop offset="1" stop-color="#06b6d4" />
+        </linearGradient>
+        <filter id="glow" x="-4" y="-4" width="40" height="40" filterUnits="userSpaceOnUse">
+            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    
+    <!-- Background (Optional, for contrast on light tabs) -->
+    <rect width="32" height="32" rx="8" fill="#050a10" fill-opacity="0" />
+
+    <!-- Group with Glow Effect -->
+    <g filter="url(#glow)">
+        <!-- Orbit Ring -->
+        <path d="M16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28C22.6274 28 28 22.6274 28 16" 
+              stroke="#00ff9f" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+        
+        <!-- Satellite / Notification Dot -->
+        <circle cx="26" cy="16" r="2" fill="#00ff9f" />
+        
+        <!-- Central Planet -->
+        <circle cx="16" cy="16" r="8" fill="url(#planet_grad)" />
+        
+        <!-- Planet shine/detail -->
+        <path d="M20 12L18 14" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round" />
+        <circle cx="14" cy="14" r="1.5" fill="rgba(255,255,255,0.8)" />
+    </g>
+</svg>

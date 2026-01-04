@@ -4,58 +4,62 @@
     <!-- Header / Interface -->
     <div class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
       <div class="pointer-events-auto">
-        <h1 class="text-3xl font-bold tracking-widest uppercase font-mono text-[#22d3ee]" style="text-shadow: 0 0 10px rgba(34,211,238,0.8);">Knowledge Universe</h1>
-        <p class="text-cyan-500 text-xs tracking-[0.5em] mt-1 pl-1 font-mono animate-pulse drop-shadow-[0_0_2px_cyan]">REPOSITORY_VISUALIZATION_SYSTEM</p>
-
-        <!-- Stats Pie Chart (Hidden as requested) -->
-        <!-- <div class="mt-2 pl-1 flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform duration-300">
-            <CyberPieChart :percentage="kbPercentage" />
-            
-            <div class="flex flex-col">
-                <div class="text-[10px] font-mono font-bold text-cyan-600 tracking-widest uppercase mb-0.5">Coverage Analysis</div>
-                <div class="text-xs font-bold text-cyan-100 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
-                    KNOWLEDGE BASE
-                </div>
-            </div>
-        </div> -->
+        <!-- Main Title with Enhanced Cyberpunk Style -->
+        <div class="title-container">
+          <h1 class="cyber-title">
+            <img src="/favicon.svg" alt="Logo" class="title-icon" />
+            <span class="title-text">
+              <span class="title-glitch" data-text="KNOWLEDGE UNIVERSE">KNOWLEDGE UNIVERSE</span>
+            </span>
+          </h1>
+          <!-- Animated underline -->
+          <div class="title-underline">
+            <div class="underline-glow"></div>
+          </div>
+        </div>
         
-        <!-- Camera Controls (Moved Here, Vertical Column) -->
-        <div class="mt-8 flex flex-col space-y-12 items-start">
-          <button @click="setCamera('overview')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
-              Overview
-          </button>
-          <button @click="setCamera('top')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
-              Top View
-          </button>
-          <button @click="setCamera('deep')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
-              Deep Dive
-          </button>
-          <button @click="setCamera('reset')" class="px-8 py-3 text-sm font-bold holo-btn clip-path-button w-48 tracking-widest">
-              Reset
-          </button>
+        <!-- Subtitle with Enhanced Style -->
+        <div class="subtitle-container">
+          <div class="subtitle-bracket">[</div>
+          <p class="cyber-subtitle">
+            <span class="subtitle-pulse">◆</span>
+            REPOSITORY VISUALIZATION SYSTEM
+            <span class="subtitle-pulse">◆</span>
+          </p>
+          <div class="subtitle-bracket">]</div>
         </div>
       </div>
       
-      <div class="pointer-events-auto flex gap-4 items-center">
-        <!-- Search and Filter (Hidden as requested) -->
-        <!-- <div class="relative group">
-            <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
-            <input 
-              v-model="searchQuery" 
-              @input="handleSearch"
-              type="text" 
-              placeholder="Search universe..." 
-              class="relative bg-black/60 border border-cyan-500/30 text-cyan-100 placeholder-cyan-700/50 rounded px-4 py-2 text-sm focus:outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all w-72 backdrop-blur-md"
-            />
-        </div>
-        
-        <div class="relative group">
-             <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
-             <select v-model="selectedSegment" @change="handleSearch" class="relative bg-black/60 border border-cyan-500/30 text-cyan-100 rounded px-4 py-2 text-sm focus:outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all backdrop-blur-md appearance-none cursor-pointer hover:bg-black/80">
-                <option value="" class="bg-black text-white">All Segments</option>
-                <option v-for="seg in segments" :key="seg" :value="seg" class="bg-black text-white">{{ seg }}</option>
-            </select>
-        </div> -->
+      <!-- Camera Controls - Right Top Corner, Horizontal Layout -->
+      <div class="pointer-events-auto flex gap-3 items-center">
+        <button 
+          @click="setCamera('overview')" 
+          class="camera-btn"
+          :class="{ 'camera-btn-active': currentCameraView === 'overview' }"
+        >
+          <span class="camera-btn-text">OVERVIEW</span>
+        </button>
+        <button 
+          @click="setCamera('top')" 
+          class="camera-btn"
+          :class="{ 'camera-btn-active': currentCameraView === 'top' }"
+        >
+          <span class="camera-btn-text">TOP VIEW</span>
+        </button>
+        <button 
+          @click="setCamera('deep')" 
+          class="camera-btn"
+          :class="{ 'camera-btn-active': currentCameraView === 'deep' }"
+        >
+          <span class="camera-btn-text">DEEP DIVE</span>
+        </button>
+        <button 
+          @click="setCamera('reset')" 
+          class="camera-btn"
+          :class="{ 'camera-btn-active': currentCameraView === 'reset' }"
+        >
+          <span class="camera-btn-text">RESET</span>
+        </button>
       </div>
     </div>
 
@@ -96,9 +100,6 @@
                     <div class="metric-target">TARGET: KB COMPLETED</div>
                 </div>
             </div>
-            
-            <!-- Scan line effect -->
-            <div class="metrics-scan-line"></div>
         </div>
     </div>
 
@@ -222,6 +223,7 @@ const selectedSegment = ref('');
 const selectedRepo = ref(null);
 const threeSceneRef = ref(null);
 const isUpdating = ref(false);
+const currentCameraView = ref('overview');
 
 const handleSelectRepo = (repo) => {
     selectedRepo.value = repo;
@@ -280,6 +282,7 @@ const addToKnowledgeBase = async () => {
 };
 
 const setCamera = (view) => {
+    currentCameraView.value = view;
     if (threeSceneRef.value) {
         threeSceneRef.value.setCameraView(view);
     }
@@ -397,6 +400,309 @@ body {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+/* ===== Enhanced Cyberpunk Title Styles ===== */
+
+.title-container {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.cyber-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #22d3ee;
+  position: relative;
+  padding: 4px 0;
+}
+
+.title-icon {
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.8)) 
+          drop-shadow(0 0 24px rgba(34, 211, 238, 0.4));
+  animation: icon-spin 10s linear infinite, icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes icon-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes icon-pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.8)) 
+            drop-shadow(0 0 24px rgba(34, 211, 238, 0.4));
+  }
+  50% { 
+    filter: drop-shadow(0 0 16px rgba(34, 211, 238, 1)) 
+            drop-shadow(0 0 32px rgba(34, 211, 238, 0.6));
+  }
+}
+
+.title-text {
+  position: relative;
+  display: inline-block;
+}
+
+.title-glitch {
+  position: relative;
+  display: inline-block;
+  text-shadow: 
+    0 0 10px rgba(34, 211, 238, 0.8),
+    0 0 20px rgba(34, 211, 238, 0.6),
+    0 0 30px rgba(34, 211, 238, 0.4),
+    2px 2px 0 rgba(0, 255, 159, 0.3),
+    -2px -2px 0 rgba(255, 0, 255, 0.3);
+  animation: title-glow 3s ease-in-out infinite;
+}
+
+/* Glitch effect on hover */
+.title-glitch::before,
+.title-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.title-glitch::before {
+  color: #00ff9f;
+  animation: glitch-1 2.5s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.title-glitch::after {
+  color: #ff00ff;
+  animation: glitch-2 2.5s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(34, 211, 238, 0.8),
+      0 0 20px rgba(34, 211, 238, 0.6),
+      0 0 30px rgba(34, 211, 238, 0.4),
+      2px 2px 0 rgba(0, 255, 159, 0.3),
+      -2px -2px 0 rgba(255, 0, 255, 0.3);
+  }
+  50% {
+    text-shadow: 
+      0 0 15px rgba(34, 211, 238, 1),
+      0 0 30px rgba(34, 211, 238, 0.8),
+      0 0 45px rgba(34, 211, 238, 0.6),
+      3px 3px 0 rgba(0, 255, 159, 0.4),
+      -3px -3px 0 rgba(255, 0, 255, 0.4);
+  }
+}
+
+@keyframes glitch-1 {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translate(0);
+  }
+  91%, 93% {
+    opacity: 0.8;
+    transform: translate(-2px, 2px);
+  }
+}
+
+@keyframes glitch-2 {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translate(0);
+  }
+  92%, 94% {
+    opacity: 0.8;
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Animated underline */
+.title-underline {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(34, 211, 238, 0.3) 20%,
+    rgba(34, 211, 238, 0.8) 50%,
+    rgba(34, 211, 238, 0.3) 80%,
+    transparent 100%
+  );
+  overflow: hidden;
+}
+
+.underline-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 159, 1) 50%,
+    transparent 100%
+  );
+  animation: underline-scan 3s ease-in-out infinite;
+}
+
+@keyframes underline-scan {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Subtitle Styles */
+.subtitle-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-left: 48px; /* Align with title text */
+}
+
+.subtitle-bracket {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #00ff9f;
+  text-shadow: 0 0 8px rgba(0, 255, 159, 0.8);
+  animation: bracket-pulse 2s ease-in-out infinite;
+}
+
+@keyframes bracket-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.cyber-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(34, 211, 238, 0.9);
+  text-shadow: 
+    0 0 5px rgba(34, 211, 238, 0.6),
+    0 0 10px rgba(34, 211, 238, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  animation: subtitle-flicker 5s ease-in-out infinite;
+}
+
+.subtitle-pulse {
+  color: #00ff9f;
+  font-size: 8px;
+  animation: diamond-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes diamond-pulse {
+  0%, 100% { 
+    opacity: 0.4;
+    text-shadow: 0 0 4px rgba(0, 255, 159, 0.4);
+  }
+  50% { 
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(0, 255, 159, 1);
+  }
+}
+
+@keyframes subtitle-flicker {
+  0%, 98%, 100% { opacity: 1; }
+  99% { opacity: 0.8; }
+}
+
+/* Camera Control Buttons - Horizontal Layout */
+.camera-btn {
+  position: relative;
+  padding: 8px 16px;
+  background: rgba(5, 10, 20, 0.8);
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #22d3ee;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  clip-path: polygon(
+    4px 0,
+    100% 0,
+    100% calc(100% - 4px),
+    calc(100% - 4px) 100%,
+    0 100%,
+    0 4px
+  );
+  box-shadow: 
+    0 0 10px rgba(34, 211, 238, 0.2),
+    inset 0 0 10px rgba(34, 211, 238, 0.05);
+}
+
+.camera-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(34, 211, 238, 0.03) 2px,
+    rgba(34, 211, 238, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+.camera-btn:hover {
+  border-color: #22d3ee;
+  box-shadow: 
+    0 0 20px rgba(34, 211, 238, 0.5),
+    0 0 30px rgba(34, 211, 238, 0.3),
+    inset 0 0 20px rgba(34, 211, 238, 0.1);
+  transform: translateY(-2px);
+}
+
+.camera-btn:active {
+  transform: translateY(0);
+}
+
+.camera-btn-text {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
+}
+
+.camera-btn:hover .camera-btn-text {
+  text-shadow: 
+    0 0 10px rgba(34, 211, 238, 1),
+    0 0 20px rgba(34, 211, 238, 0.6);
+}
+
+/* Active State Styles */
+.camera-btn-active {
+  background: rgba(34, 211, 238, 0.2) !important;
+  border-color: #22d3ee !important;
+  box-shadow: 
+    0 0 15px rgba(34, 211, 238, 0.4),
+    inset 0 0 15px rgba(34, 211, 238, 0.2) !important;
+}
+
+.camera-btn-active .camera-btn-text {
+  color: #fff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
 }
 
 /* System Metrics Container - Matching Team Stats Style */

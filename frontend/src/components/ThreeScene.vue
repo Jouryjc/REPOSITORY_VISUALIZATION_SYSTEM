@@ -1,11 +1,5 @@
 <template>
   <div ref="container" class="w-full h-full relative">
-    <div v-if="hoveredRepo" class="absolute top-4 left-4 bg-black/80 border border-cyan-500 text-cyan-300 p-4 rounded max-w-sm backdrop-blur-sm select-none pointer-events-none z-10">
-      <h3 class="text-xl font-bold mb-2">{{ hoveredRepo.name }}</h3>
-      <p class="text-sm">Team: {{ hoveredRepo.team }}</p>
-      <p class="text-sm">Business: {{ hoveredRepo.businessSegment }}</p>
-      <p v-if="hoveredRepo.knowledgeBase" class="text-yellow-400 font-bold mt-1">★ Knowledge Base</p>
-    </div>
   </div>
 </template>
 
@@ -34,7 +28,6 @@ const props = defineProps({
 const emits = defineEmits(['select-repo']);
 
 const container = ref(null);
-const hoveredRepo = ref(null);
 
 
 let scene, camera, renderer, controls, raycaster, pointer, stats, composer;
@@ -298,47 +291,19 @@ const animate = () => {
     // stats.begin();
     controls.update();
 
-    // Raycasting (Only if no repo selected)
+    // Raycasting - Only change cursor, no hover effects
     if (!props.selectedRepo) {
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(planetMeshes);
 
         if (intersects.length > 0) {
-            const object = intersects[0].object;
             container.value.style.cursor = 'pointer';
-            
-            if (hoveredRepo.value !== object.userData.repo) {
-                hoveredRepo.value = object.userData.repo;
-                object.scale.set(1.2, 1.2, 1.2);
-                // Removed sprite scaling to avoid "flying text" effect
-            }
         } else {
             container.value.style.cursor = 'default';
-            if (hoveredRepo.value) {
-                 const prevMesh = planetMeshes.find(m => m.userData.repo === hoveredRepo.value);
-                 if (prevMesh) {
-                     prevMesh.scale.set(1, 1, 1);
-                     const sprite = prevMesh.children.find(c => c.isSprite);
-                     if(sprite) sprite.scale.multiplyScalar(1/1.5);
-                 }
-                 hoveredRepo.value = null;
-            }
         }
     } else {
         // If selected, ensure cursor is default
         container.value.style.cursor = 'default';
-        if (hoveredRepo.value) {
-             const prevMesh = planetMeshes.find(m => m.userData.repo === hoveredRepo.value);
-             if (prevMesh) {
-                 prevMesh.scale.set(1, 1, 1);
-                 // Sprite scale resets automatically with parent scale reset if we didn't modify it separately?
-                 // Actually, if we modified sprite scale relative to parent, we'd need to reset.
-                 // But since we removed the modification above, we don't need to reset it here either,
-                 // assuming the parent scale reset handles the overall size. 
-                 // However, let's just be clean.
-             }
-             hoveredRepo.value = null;
-        }
     }
 
     // Render with Composer

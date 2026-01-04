@@ -86,59 +86,87 @@
         </div>
     </div>
 
-    <!-- Details Panel (Cyberpunk Modal) -->
+    <!-- Details Panel (Cyberpunk Modal) - Fixed position, independent -->
     <Transition name="slide-fade">
-      <div v-if="selectedRepo" class="absolute top-[15%] right-8 w-96 tech-card p-6 text-cyan-50 z-20">
-          <!-- Tech Corners -->
-          <div class="tech-corner top-0 left-0 border-r-0 border-b-0"></div>
-          <div class="tech-corner top-0 right-0 border-l-0 border-b-0"></div>
-          <div class="tech-corner bottom-0 left-0 border-r-0 border-t-0"></div>
+      <div v-if="selectedRepo" class="fixed w-96 tech-card p-8 text-cyan-50 pointer-events-auto" style="top: 80px; right: 16px; z-index: 200;">
           <!-- Cut corner bottom right handled by clip-path, maybe add accent line there? -->
           <div class="absolute bottom-[2px] right-[20px] w-8 h-[2px] bg-cyan-500 transform rotate-45 origin-right"></div>
 
           <div class="relative z-10">
               <div class="flex justify-between items-start mb-6 tech-header pb-2">
-                 <h2 class="text-xl font-bold text-cyan-400 truncate w-64" :title="selectedRepo.name">{{ selectedRepo.name || 'Repository' }}</h2>
-                 <button @click="closeDetails" class="text-cyan-500 hover:text-cyan-300 hover:rotate-90 transition-all duration-300">✕</button>
+                 <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <!-- KB Status Badge - inline with title -->
+                    <div v-if="selectedRepo.knowledgeBase" class="kb-status-mini">
+                       <div class="kb-mini-dot"></div>
+                       <span>KB</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-cyan-300 truncate drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" :title="selectedRepo.name">{{ selectedRepo.name || 'Repository' }}</h3>
+                 </div>
+                 <!-- Cyberpunk Close Button -->
+                 <button @click="closeDetails" class="cyber-close-btn group flex items-center justify-center" title="关闭">
+                    <div class="cyber-close-border"></div>
+                    <div class="cyber-close-bg"></div>
+                    <svg class="cyber-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                       <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
+                    </svg>
+                 </button>
               </div>
               
-              <div class="space-y-5 text-sm font-mono tracking-wide">
-                 <div class="flex group items-baseline">
-                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">URL_LINK</span> 
-                     <a :href="selectedRepo.url" target="_blank" class="text-cyan-100 hover:text-white hover:shadow-[0_0_10px_cyan] hover:underline truncate flex-1 block transition-all font-bold text-shadow-sm">{{ selectedRepo.url }}</a>
-                 </div>
-                 <div class="flex items-baseline">
-                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">TEAM_ID</span> 
-                     <span class="text-gray-100 font-semibold drop-shadow-md">{{ selectedRepo.team }}</span>
-                 </div>
-                 <div class="flex items-baseline">
-                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">SECTOR</span> 
-                     <span class="text-gray-100 font-semibold drop-shadow-md">{{ selectedRepo.businessSegment }} <span v-if="selectedRepo.subSegment" class="text-cyan-400 px-1">>></span> {{ selectedRepo.subSegment }}</span>
-                 </div>
-                 <div class="flex items-baseline">
-                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">OWNER</span> 
-                     <span class="text-gray-100 font-semibold drop-shadow-md">{{ selectedRepo.caretaker }}</span>
-                 </div>
-                 <div v-if="selectedRepo.remark" class="flex items-baseline">
-                     <span class="text-cyan-600 w-24 uppercase text-[10px] font-bold tracking-widest">NOTES</span> 
-                     <span class="text-slate-300 italic">{{ selectedRepo.remark }}</span>
-                 </div>
+              <div class="space-y-4 text-sm font-mono">
+                 <!-- URL Link -->
+                 <div class="flex flex-col gap-1">
+                      <span class="info-label">链接：</span> 
+                      <a :href="selectedRepo.url" target="_blank" class="text-white hover:text-cyan-300 hover:shadow-[0_0_10px_cyan] hover:underline truncate block transition-all font-semibold text-sm pl-1">{{ selectedRepo.url }}</a>
+                  </div>
                  
-                 <div v-if="selectedRepo.knowledgeBase" class="mt-6 p-4 bg-gradient-to-r from-yellow-900/60 to-transparent border-l-4 border-yellow-400 flex items-center gap-4 relative overflow-hidden group">
-                     <div class="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                     <span class="text-yellow-400 font-bold text-3xl animate-pulse drop-shadow-[0_0_5px_gold]">⚠</span>
-                     <div>
-                         <div class="text-yellow-500 text-[10px] font-bold uppercase tracking-[0.2em]">Classification</div>
-                         <div class="text-yellow-100 font-bold text-base drop-shadow-md">Valid Knowledge Base</div>
-                     </div>
-                 </div>
+                 <!-- Team -->
+                 <div class="flex items-center gap-2">
+                      <span class="info-label">团队：</span> 
+                      <span class="info-value">{{ selectedRepo.team || '-' }}</span>
+                  </div>
+                 
+                 <!-- Business Segment -->
+                 <div class="flex items-center gap-2">
+                      <span class="info-label">业务板块：</span> 
+                      <span class="info-value">{{ selectedRepo.businessSegment || '-' }} 
+                          <span v-if="selectedRepo.subSegment" class="text-yellow-400 px-1">/</span>
+                          <span v-if="selectedRepo.subSegment">{{ selectedRepo.subSegment }}</span>
+                      </span>
+                  </div>
+                 
+                 <!-- Owner -->
+                 <div class="flex items-center gap-2">
+                      <span class="info-label">看护人：</span> 
+                      <span class="info-value">{{ selectedRepo.caretaker || '-' }}</span>
+                  </div>
+                 
+                 <!-- Notes (if exists) -->
+                 <div v-if="selectedRepo.remark" class="flex flex-col gap-1">
+                      <span class="info-label">备注：</span> 
+                      <span class="text-cyan-200 italic text-sm pl-1">{{ selectedRepo.remark }}</span>
+                  </div>
               </div>
 
-              <div class="mt-8 flex justify-end">
-                  <button @click="closeDetails" class="group relative px-6 py-2 bg-cyan-900/20 hover:bg-cyan-500/20 border border-cyan-800 hover:border-cyan-400 transition-all overflow-hidden">
-                      <span class="relative z-10 text-cyan-400 text-xs font-bold uppercase tracking-widest group-hover:text-cyan-100">Term_Close</span>
-                      <div class="absolute inset-0 bg-cyan-500/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+              <!-- Footer Actions -->
+              <div class="mt-6 flex justify-between items-center">
+                  <!-- Add to Knowledge Base Button (for non-KB repos) -->
+                  <button 
+                      v-if="!selectedRepo.knowledgeBase" 
+                      @click="addToKnowledgeBase"
+                      :disabled="isUpdating"
+                      class="group relative px-4 py-2 bg-green-900/30 hover:bg-green-600/40 border border-green-600 hover:border-green-400 transition-all overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                      <span class="relative z-10 text-green-400 text-xs font-bold uppercase tracking-widest group-hover:text-green-100 flex items-center gap-2">
+                          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M12 4v16m8-8H4" stroke-linecap="round"/>
+                          </svg>
+                          {{ isUpdating ? '添加中...' : '添加知识库' }}
+                      </span>
+                      <div class="absolute inset-0 bg-green-500/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
                   </button>
+                  
+                  <!-- Empty spacer for non-KB repos to maintain layout -->
+                  <div v-else></div>
               </div>
           </div>
       </div>
@@ -172,6 +200,7 @@ const searchQuery = ref('');
 const selectedSegment = ref('');
 const selectedRepo = ref(null);
 const threeSceneRef = ref(null);
+const isUpdating = ref(false);
 
 const handleSelectRepo = (repo) => {
     selectedRepo.value = repo;
@@ -179,6 +208,47 @@ const handleSelectRepo = (repo) => {
 
 const closeDetails = () => {
     selectedRepo.value = null;
+};
+
+// Add to Knowledge Base
+const addToKnowledgeBase = async () => {
+    if (!selectedRepo.value || !selectedRepo.value._id) {
+        console.error('No repository selected or missing ID');
+        return;
+    }
+    
+    isUpdating.value = true;
+    try {
+        const response = await fetch(`http://localhost:3000/api/repos/${selectedRepo.value._id}/knowledge-base`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ knowledgeBase: true })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update repository');
+        }
+        
+        const data = await response.json();
+        
+        // Update the local repo data
+        selectedRepo.value.knowledgeBase = true;
+        
+        // Update in the repos array as well
+        const index = repos.value.findIndex(r => r._id === selectedRepo.value._id);
+        if (index !== -1) {
+            repos.value[index].knowledgeBase = true;
+        }
+        
+        console.log('Repository added to knowledge base:', data);
+    } catch (error) {
+        console.error('Error updating repository:', error);
+        alert('添加知识库失败，请稍后重试');
+    } finally {
+        isUpdating.value = false;
+    }
 };
 
 const setCamera = (view) => {
@@ -293,20 +363,276 @@ body {
   opacity: 0;
 }
 
-@layer utilities {
-    .tech-card {
-        background: #050a10; /* Solid dark background, no transparency */
-        border: 1px solid rgba(6, 182, 212, 0.6); /* Brighter border */
-        box-shadow: 0 0 25px rgba(0,0,0,0.9), 0 0 10px rgba(6, 182, 212, 0.2);
-        clip-path: polygon(
-            0 0, 
-            100% 0, 
-            100% calc(100% - 20px), 
-            calc(100% - 20px) 100%, 
-            0 100%
-        );
-        position: relative;
+.tech-card {
+    background: #050a10 !important; /* Solid dark background */
+    border: 1px solid rgba(6, 182, 212, 0.8) !important; /* Brighter cyan border */
+    box-shadow: 0 0 30px rgba(0,0,0,0.95), 0 0 20px rgba(6, 182, 212, 0.4), inset 0 0 30px rgba(6, 182, 212, 0.1) !important;
+    clip-path: polygon(
+        0 0, 
+        100% 0, 
+        100% calc(100% - 20px), 
+        calc(100% - 20px) 100%, 
+        0 100%
+    );
+    color: #ffffff !important; /* Force white text color */
+}
+
+/* Info Label and Value Styles */
+.info-label {
+    color: #22d3ee; /* Bright cyan */
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    text-shadow: 0 0 6px rgba(34, 211, 238, 0.5);
+}
+
+.info-value {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Cyberpunk Close Button */
+.cyber-close-btn {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.cyber-close-border {
+    position: absolute;
+    inset: 0;
+    border: 1px solid #06b6d4;
+    clip-path: polygon(
+        4px 0, 100% 0, 100% calc(100% - 4px),
+        calc(100% - 4px) 100%, 0 100%, 0 4px
+    );
+    transition: all 0.3s ease;
+}
+
+.cyber-close-btn:hover .cyber-close-border {
+    border-color: #22d3ee;
+    box-shadow: 
+        0 0 10px rgba(34, 211, 238, 0.5),
+        inset 0 0 10px rgba(34, 211, 238, 0.1);
+}
+
+.cyber-close-bg {
+    position: absolute;
+    inset: 1px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(0, 20, 30, 0.8) 100%);
+    clip-path: polygon(
+        4px 0, 100% 0, 100% calc(100% - 4px),
+        calc(100% - 4px) 100%, 0 100%, 0 4px
+    );
+    transition: all 0.3s ease;
+}
+
+.cyber-close-btn:hover .cyber-close-bg {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(0, 40, 50, 0.9) 100%);
+}
+
+.cyber-close-icon {
+    position: relative;
+    z-index: 10;
+    width: 16px;
+    height: 16px;
+    stroke: #06b6d4;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.5));
+}
+
+.cyber-close-btn:hover .cyber-close-icon {
+    stroke: #22d3ee;
+    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.8));
+    transform: rotate(90deg);
+}
+
+/* Mini KB Status Badge - Inline with title */
+.kb-status-mini {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, rgba(0, 255, 159, 0.2) 0%, rgba(0, 30, 20, 0.9) 100%);
+    border: 1px solid #00ff9f;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: monospace;
+    color: #00ff9f;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 6px #00ff9f;
+    clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+    box-shadow: 
+        0 0 8px rgba(0, 255, 159, 0.4),
+        inset 0 0 8px rgba(0, 255, 159, 0.1);
+    flex-shrink: 0;
+    animation: kb-mini-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes kb-mini-glow {
+    0% {
+        box-shadow: 
+            0 0 8px rgba(0, 255, 159, 0.4),
+            inset 0 0 8px rgba(0, 255, 159, 0.1);
     }
+    100% {
+        box-shadow: 
+            0 0 15px rgba(0, 255, 159, 0.6),
+            inset 0 0 12px rgba(0, 255, 159, 0.2);
+    }
+}
+
+.kb-mini-dot {
+    width: 6px;
+    height: 6px;
+    background: #00ff9f;
+    border-radius: 50%;
+    animation: kb-mini-pulse 1s ease-in-out infinite;
+    box-shadow: 0 0 6px #00ff9f;
+}
+
+@keyframes kb-mini-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+/* Cyberpunk Knowledge Base Badge */
+.kb-badge {
+    position: relative;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(0, 255, 159, 0.15) 0%, rgba(0, 40, 30, 0.9) 100%);
+    border: 1px solid #00ff9f;
+    clip-path: polygon(
+        8px 0, 
+        100% 0, 
+        100% calc(100% - 8px), 
+        calc(100% - 8px) 100%, 
+        0 100%, 
+        0 8px
+    );
+    box-shadow: 
+        0 0 20px rgba(0, 255, 159, 0.4),
+        0 0 40px rgba(0, 255, 159, 0.2),
+        inset 0 0 20px rgba(0, 255, 159, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.kb-badge:hover {
+    box-shadow: 
+        0 0 30px rgba(0, 255, 159, 0.6),
+        0 0 60px rgba(0, 255, 159, 0.3),
+        inset 0 0 30px rgba(0, 255, 159, 0.2);
+    border-color: #4dffb8;
+}
+
+/* Animated scan line effect */
+.kb-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        #00ff9f 20%,
+        #00ff9f 80%,
+        transparent 100%
+    );
+    opacity: 0.8;
+    animation: kb-scan 2s linear infinite;
+}
+
+@keyframes kb-scan {
+    0% { top: 0; opacity: 0.8; }
+    50% { opacity: 0.4; }
+    100% { top: 100%; opacity: 0.8; }
+}
+
+/* Glitch effect overlay */
+.kb-glitch {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 159, 0.03) 2px,
+        rgba(0, 255, 159, 0.03) 4px
+    );
+    pointer-events: none;
+    animation: kb-glitch 0.3s infinite;
+}
+
+@keyframes kb-glitch {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Icon wrapper with rotation animation */
+.kb-icon-wrapper {
+    animation: kb-icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes kb-icon-pulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 4px #00ff9f);
+        transform: scale(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 12px #00ff9f);
+        transform: scale(1.1);
+    }
+}
+
+/* Text glow effect */
+.kb-text {
+    text-shadow: 
+        0 0 5px #00ff9f,
+        0 0 10px #00ff9f,
+        0 0 20px rgba(0, 255, 159, 0.5);
+    animation: kb-text-flicker 4s ease-in-out infinite;
+}
+
+@keyframes kb-text-flicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.8; }
+    94% { opacity: 1; }
+    95% { opacity: 0.9; }
+    96% { opacity: 1; }
+}
+
+/* Pulsing indicator dot */
+.kb-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #00ff9f;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff9f;
+    animation: kb-dot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes kb-dot-pulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px #00ff9f, 0 0 20px rgba(0, 255, 159, 0.5);
+    }
+    50% { 
+        transform: scale(1.3);
+        box-shadow: 0 0 15px #00ff9f, 0 0 30px rgba(0, 255, 159, 0.8);
+    }
+}
+
+@layer utilities {
     
     /* Subtle scanline background */
     .tech-card::before {

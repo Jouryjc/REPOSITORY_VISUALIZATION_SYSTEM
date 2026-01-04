@@ -174,6 +174,33 @@ app.get('/api/repos', async (req, res) => {
     }
 });
 
+// Update repository knowledgeBase status
+app.patch('/api/repos/:id/knowledge-base', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { knowledgeBase } = req.body;
+
+        if (typeof knowledgeBase !== 'boolean') {
+            return res.status(400).json({ error: 'knowledgeBase must be a boolean value' });
+        }
+
+        const repo = await Repository.findByIdAndUpdate(
+            id,
+            { knowledgeBase },
+            { new: true }
+        );
+
+        if (!repo) {
+            return res.status(404).json({ error: 'Repository not found' });
+        }
+
+        res.json({ message: 'Repository updated successfully', repo });
+    } catch (error) {
+        console.error('Update error:', error);
+        res.status(500).json({ error: 'Failed to update repository' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

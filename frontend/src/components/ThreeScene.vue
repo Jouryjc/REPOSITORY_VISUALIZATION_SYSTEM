@@ -368,22 +368,8 @@ const onPointerClick = (event) => {
 // Focus Animation
 const focusOnRepo = (repo) => {
     if (!repo) {
-        // Reset View
-        gsap.to(camera.position, {
-            duration: 1.5,
-            x: 0,
-            y: 200,
-            z: 800,
-            ease: "power2.inOut"
-        });
-        gsap.to(controls.target, {
-            duration: 1.5,
-            x: 0,
-            y: 0,
-            z: 0,
-            ease: "power2.inOut",
-            onUpdate: () => controls.update()
-        });
+        // Don't reset view when closing details panel
+        // Just keep the current camera position
         return;
     }
 
